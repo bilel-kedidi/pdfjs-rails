@@ -26,6 +26,16 @@ module Pdfjs
       :zoom_buttons,
       :download
     ]
+
+    CUSTOM = [
+      :page_selector,
+      :sidebar,
+      :page_buttons,
+      :zoom_buttons,
+      :zoom_select,
+      :fullscreen,
+      :bookmark
+    ]
     
     def pdf_viewer(filename, options={})
       toolbar = options.fetch(:toolbar, :default)
@@ -33,13 +43,14 @@ module Pdfjs
       toolbar = case toolbar
       when :everything; EVERYTHING
       when :minimal; MINIMAL
+      when :custom; CUSTOM
       else DEFAULT
       end unless toolbar.is_a?(Array)
       
       can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
 
       html = <<-HTML
-        <div id="outerContainer" dir="ltr" data-pdf=#{filename.to_json}>
+        <div id="outerContainer" dir="ltr" data-pdf=#{filename.to_s}>
           <div id="sidebarContainer">
             <div id="toolbarSidebar" class="splitToolbarButton toggled">
               <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="1" data-l10n-id="thumbs">
@@ -177,7 +188,7 @@ module Pdfjs
     
       <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-          PDFView.open(#{filename.to_json});
+          PDFView.open("#{filename.to_s}");
         }, true);
       </script>
       HTML
