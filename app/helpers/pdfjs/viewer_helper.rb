@@ -84,7 +84,7 @@ module Pdfjs
       html.html_safe
     end
     
-     def pdf_viewer(filename, options={})
+    def pdf_viewer(filename, options={})
       toolbar = options.fetch(:toolbar, :default)
       
       toolbar = case toolbar
