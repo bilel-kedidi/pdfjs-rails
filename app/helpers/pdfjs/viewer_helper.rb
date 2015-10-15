@@ -36,8 +36,55 @@ module Pdfjs
       :fullscreen,
       :bookmark
     ]
+
+    PRINT = [
+      :print
+    ]
+
+    def print_pdf(filename, text, options={})
+      toolbar = options.fetch(:toolbar, :default)
+      
+      toolbar = PRINT
+      
+      can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
+
+      html = <<-HTML
+        <div dir="ltr" data-pdf=#{filename.to_s}>
+          <div>
+            <div>
+            
+              <div>
+                <div id="toolbarViewerRight">
+                  <input id="fileInput" class="fileInput" type="file" oncontextmenu="return false;" style="visibility: hidden; position: fixed; right: 0; top: 0" />
+
+                  <button id="fullscreen" class="toolbarButton fullscreen#{can_display[:fullscreen]}" title="Fullscreen" tabindex="11" data-l10n-id="fullscreen">
+                    <span data-l10n-id="fullscreen_label">Fullscreen</span>
+                  </button>
+                  
+                    <button id="openFile" class="toolbarButton openFile#{can_display[:open]}" title="Open File" tabindex="12" data-l10n-id="open_file">
+                     <span data-l10n-id="open_file_label">Open</span>
+                    </button>
+                  
+                  <button id="print" class="btn btn-primary #{can_display[:print]}" title="Print" tabindex="13" data-l10n-id="print">
+                        <span data-l10n-id="print_label">#{text}</span>
+                      </button>
+                  <button id="download" class="toolbarButton download#{can_display[:download]}" title="Download" tabindex="14" data-l10n-id="download">
+                    <span data-l10n-id="download_label">Download</span>
+                  </button>
+                  <!-- <div class="toolbarButtonSpacer"></div> -->
+                  <a href="#" id="viewBookmark" class="toolbarButton bookmark#{can_display[:bookmark]}" title="Get bookmark link" tabindex="15" data-l10n-id="bookmark"><span data-l10n-id="bookmark_label">Get bookmark link</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div> <!-- outerContainer -->
+
+      HTML
     
-    def pdf_viewer(filename, options={})
+      html.html_safe
+    end
+    
+     def pdf_viewer(filename, options={})
       toolbar = options.fetch(:toolbar, :default)
       
       toolbar = case toolbar
